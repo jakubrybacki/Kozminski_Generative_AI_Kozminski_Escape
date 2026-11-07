@@ -202,6 +202,42 @@ const SoundSystem = {
         break;
       }
 
+      // 7. 'artillery': świst pocisku i potężna retro eksplozja odrzutu
+      case 'artillery': {
+        // Świst spadający
+        const whistle = this.ctx.createOscillator();
+        const whistleGain = this.ctx.createGain();
+        whistle.type = 'sine';
+        whistle.frequency.setValueAtTime(1400, now);
+        whistle.frequency.exponentialRampToValueAtTime(200, now + 0.32);
+
+        whistleGain.gain.setValueAtTime(0.2, now);
+        whistleGain.gain.exponentialRampToValueAtTime(0.01, now + 0.32);
+
+        whistle.connect(whistleGain);
+        whistleGain.connect(this.ctx.destination);
+        whistle.start(now);
+        whistle.stop(now + 0.32);
+
+        // Eksplozja uderzenia
+        const boomTime = now + 0.30;
+        const boomOsc = this.ctx.createOscillator();
+        const boomGain = this.ctx.createGain();
+
+        boomOsc.type = 'sawtooth';
+        boomOsc.frequency.setValueAtTime(130, boomTime);
+        boomOsc.frequency.exponentialRampToValueAtTime(25, boomTime + 0.5);
+
+        boomGain.gain.setValueAtTime(0.35, boomTime);
+        boomGain.gain.exponentialRampToValueAtTime(0.001, boomTime + 0.55);
+
+        boomOsc.connect(boomGain);
+        boomGain.connect(this.ctx.destination);
+        boomOsc.start(boomTime);
+        boomOsc.stop(boomTime + 0.55);
+        break;
+      }
+
       default:
         console.warn(`[SoundSystem] Nieznany typ dźwięku: ${type}`);
     }

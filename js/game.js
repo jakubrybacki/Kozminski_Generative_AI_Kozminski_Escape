@@ -56,6 +56,16 @@
   const btnRight = document.getElementById('btn-right');
   const btnSprint = document.getElementById('btn-sprint');
 
+  // Przycisk Artylerii (odrzut profesora do kąta mapy)
+  const btnArtillery = document.getElementById('btn-artillery');
+  const artilleryStatusBadge = document.getElementById('artillery-status-badge');
+  const btnMobileArtillery = document.getElementById('btn-mobile-artillery');
+
+  let artilleryCooldown = 0;
+  const ARTILLERY_COOLDOWN_TIME = 10.0;
+  let screenShakeDuration = 0;
+  let blastParticles = [];
+
   // --- Stan Rozgrywki ---
   const TARGET_ECTS = 30;
   let gameState = 'START'; // 'START', 'PLAYING', 'PAUSED', 'GAMEOVER', 'VICTORY'
@@ -257,8 +267,22 @@
     // Zapewnienie, że profesor nie koliduje z żadną przeszkodą
     freePositionIfNeeded(professor);
 
-    // Spawnowanie przedmiotów
-    spawnItems();
+    // Reset Artylerii
+    artilleryCooldown = 0;
+    screenShakeDuration = 0;
+    blastParticles = [];
+    if (artilleryStatusBadge) {
+      artilleryStatusBadge.textContent = 'GOTOWA';
+      artilleryStatusBadge.classList.add('ready');
+    }
+    if (btnArtillery) {
+      btnArtillery.classList.remove('on-cooldown');
+      btnArtillery.disabled = false;
+    }
+    if (btnMobileArtillery) {
+      btnMobileArtillery.classList.remove('on-cooldown');
+      btnMobileArtillery.disabled = false;
+    }
 
     // Ukrycie modali
     showModal(null);
@@ -300,6 +324,9 @@
     if (e.code === 'KeyD' || e.code === 'ArrowRight') keys.right = true;
     if (e.code === 'ShiftLeft' || e.code === 'ShiftRight' || e.code === 'Space') keys.sprint = true;
 
+    // Klawisz R: Artyleria (odrzut profesora)
+    if (e.code === 'KeyR') fireArtillery();
+
     if (e.code === 'KeyM') toggleAudio();
     if (e.code === 'KeyP' || e.code === 'Escape') togglePause();
   });
@@ -311,6 +338,87 @@
     if (e.code === 'KeyD' || e.code === 'ArrowRight') keys.right = false;
     if (e.code === 'ShiftLeft' || e.code === 'ShiftRight' || e.code === 'Space') keys.sprint = false;
   });
+
+  // Tworzenie cząsteczek eksplozji retro
+  function createBlast(x, y) {
+    const colors = ['#f2a900', '#ffc740', '#ef4444', '#f8fafc', '#dc2626'];
+    for (let i = 0; i < 22; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 1.8 + Math.random() * 4.5;
+      blastParticles.push({
+        x: x,
+        y: y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        radius: 3 + Math.random() * 4,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        life: 0.5 + Math.random() * 0.35,
+        maxLife: 0.85
+      });
+    }
+  }
+
+  // Funkcja Artylerii - odrzuca wykładowcę w najdalszy kąt mapy
+  function fireArtillery() {
+    if (gameState !== 'PLAYING' || artilleryCooldown > 0) return;
+
+    // 4 bezpieczne narożniki mapy (Budynek D, Aula Główna, Biblioteka/Dziekanat, Bistro)
+    const corners = [
+      { x: 45, y: 135, name: "Narożnik Budynku D" },
+      { x: 745, y: 55, name: "Narożnik Auli Głównej" },
+      { x: 50, y: 490, name: "Narożnik Dziekanatu" },
+      { x: 745, y: 490, name: "Narożnik Bistro ALK" }
+    ];
+
+    // Znajdź narożnik najbardziej oddalony od studenta dla maksymalnego bezpieczeństwa
+    let farthestCorner = corners[0];
+    let maxDist = -1;
+    for (const c of corners) {
+      const d = Math.hypot(player.x - c.x, player.y - c.y);
+      if (d > maxDist) {
+        maxDist = d;
+        farthestCorner = c;
+      }
+    }
+
+    // Dawna pozycja do fali uderzeniowej
+    const oldX = professor.x;
+    const oldY = professor.y;
+
+    // Przemieszczenie profesora w wybrany kąt
+    professor.x = farthestCorner.x;
+    professor.y = farthestCorner.y;
+    professor.direction = { x: 0, y: 0 };
+    professor.patrolTarget = { x: canvas.width / 2, y: canvas.height / 2 };
+    freePositionIfNeeded(professor);
+
+    // Zamrożenie i dezorientacja po uderzeniu fali
+    professor.freezeDuration = 2.4;
+    professor.isChasing = false;
+
+    // Wstrząs ekranu i efekty wizualne
+    screenShakeDuration = 0.45;
+    createBlast(oldX, oldY);
+    createBlast(farthestCorner.x, farthestCorner.y);
+
+    // Efekt dźwiękowy artylerii
+    if (window.SoundSystem) {
+      window.SoundSystem.play('artillery');
+    }
+
+    // Zabawna reakcja profesora w dymku dialogowym
+    const artilleryQuotes = [
+      "„Co to za nalot?! Kto zatwierdził manewr artyleryjski w Budynku D?!”",
+      "„Znowu remont w Dziekanacie?! Zostałem odrzucony na drugi koniec kampusu!”",
+      "„Zarządzenie Rektora: Natychmiastowa dyslokacja do kąta sali!”",
+      "„Panie Kowalski! Użycie artylerii na kolokwium jest niezgodne z regulaminem ALK!”",
+      "„Ewakuacja do narożnika! Zabezpieczyć protokoły egzaminacyjne!”"
+    ];
+    triggerProfessorQuote(artilleryQuotes[Math.floor(Math.random() * artilleryQuotes.length)]);
+
+    // Rozpoczęcie cooldownu
+    artilleryCooldown = ARTILLERY_COOLDOWN_TIME;
+  }
 
   // --- Obsługa Przycisków Dotykowych (#mobile-controls) ---
   function bindTouchBtn(element, keyName) {
@@ -337,6 +445,17 @@
   bindTouchBtn(btnLeft, 'left');
   bindTouchBtn(btnRight, 'right');
   bindTouchBtn(btnSprint, 'sprint');
+
+  // Podpięcie przycisków Artylerii
+  if (btnArtillery) {
+    btnArtillery.addEventListener('click', fireArtillery);
+  }
+  if (btnMobileArtillery) {
+    btnMobileArtillery.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      fireArtillery();
+    });
+  }
 
   // Przełącznik Dźwięku
   function toggleAudio() {
@@ -411,6 +530,59 @@
     if (gameState !== 'PLAYING') return;
 
     elapsedTime = (performance.now() - startTime) / 1000;
+
+    // 0. Obsługa cooldownu Artylerii i wstrząsu ekranu
+    if (artilleryCooldown > 0) {
+      artilleryCooldown -= dt;
+      if (artilleryCooldown <= 0) {
+        artilleryCooldown = 0;
+        if (artilleryStatusBadge) {
+          artilleryStatusBadge.textContent = 'GOTOWA';
+          artilleryStatusBadge.classList.add('ready');
+        }
+        if (btnArtillery) {
+          btnArtillery.classList.remove('on-cooldown');
+          btnArtillery.disabled = false;
+        }
+        if (btnMobileArtillery) {
+          btnMobileArtillery.classList.remove('on-cooldown');
+          btnMobileArtillery.disabled = false;
+        }
+      } else {
+        if (artilleryStatusBadge) {
+          artilleryStatusBadge.textContent = `${Math.ceil(artilleryCooldown)}s`;
+          artilleryStatusBadge.classList.remove('ready');
+        }
+        if (btnArtillery) {
+          btnArtillery.classList.add('on-cooldown');
+          btnArtillery.disabled = true;
+        }
+        if (btnMobileArtillery) {
+          btnMobileArtillery.classList.add('on-cooldown');
+          btnMobileArtillery.disabled = true;
+        }
+      }
+    } else {
+      if (artilleryStatusBadge && !artilleryStatusBadge.classList.contains('ready')) {
+        artilleryStatusBadge.textContent = 'GOTOWA';
+        artilleryStatusBadge.classList.add('ready');
+      }
+    }
+
+    if (screenShakeDuration > 0) {
+      screenShakeDuration -= dt;
+    }
+
+    // Aktualizacja cząsteczek eksplozji
+    for (let i = blastParticles.length - 1; i >= 0; i--) {
+      const p = blastParticles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life -= dt;
+      if (p.life <= 0) {
+        blastParticles.splice(i, 1);
+      }
+    }
 
     // 1. Dymek z wypowiedziami profesora
     if (quoteDisplayTime > 0) {
@@ -657,6 +829,14 @@
   function render() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    ctx.save();
+    if (screenShakeDuration > 0) {
+      const shakeMag = Math.min(10, screenShakeDuration * 16);
+      const sx = (Math.random() - 0.5) * shakeMag;
+      const sy = (Math.random() - 0.5) * shakeMag;
+      ctx.translate(sx, sy);
+    }
+
     // 1. Tło Kampusu - Poszczególne Budynki i Strefy
     for (const z of zones) {
       ctx.fillStyle = z.color;
@@ -838,6 +1018,20 @@
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText("🧑‍🎓", player.x, player.y - 1);
+
+    // 7. Rysowanie cząsteczek eksplozji Artylerii
+    for (const p of blastParticles) {
+      const alpha = Math.max(0, p.life / p.maxLife);
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    ctx.restore(); // Przywrócenie transformacji ekranu (screen shake)
 
     // Ekran pauzy
     if (gameState === 'PAUSED') {

@@ -68,8 +68,15 @@
         </div>
       </div>
 
-      <!-- Opcje dźwięku i pauzy -->
+      <!-- Opcje dźwięku, pauzy oraz Artyleria -->
       <div class="hud-section hud-controls-zone">
+        <button id="btn-artillery" class="artillery-hud-btn" type="button" aria-label="Wezwij artylerię" title="Artyleria Dziekanatu (Klawisz R / Klik) - Teleportuje profesora do narożnika">
+          <span class="artillery-icon" aria-hidden="true">🎯</span>
+          <span class="artillery-badge-text">
+            <span class="artillery-name">ARTYLERIA</span>
+            <span id="artillery-status-badge" class="artillery-state">GOTOWA</span>
+          </span>
+        </button>
         <button id="btn-audio-toggle" class="hud-icon-btn" type="button" aria-label="Wycisz lub włącz dźwięk" title="Dźwięk (M)">
           <span id="audio-icon" aria-hidden="true">🔊</span>
         </button>
@@ -132,8 +139,12 @@
         </button>
       </div>
 
-      <!-- Przycisk Sprintu po prawej stronie -->
+      <!-- Przyciski Akcji po prawej stronie (Sprint i Artyleria) -->
       <div class="action-cluster">
+        <button id="btn-mobile-artillery" class="mobile-artillery-btn" type="button" aria-label="Wezwij artylerię">
+          <span class="artillery-icon" aria-hidden="true">🎯</span>
+          <span class="action-label">ARTYLERIA</span>
+        </button>
         <button id="btn-sprint" class="sprint-btn" type="button" aria-label="Sprint">
           <span class="sprint-icon" aria-hidden="true">⚡</span>
           <span class="sprint-label">SPRINT</span>
@@ -198,6 +209,13 @@
                   <span>Unikaj kontaktu! Złapanie oznacza natychmiastową poprawkę.</span>
                 </div>
               </div>
+              <div class="legend-item">
+                <span class="legend-icon" aria-hidden="true">🎯</span>
+                <div class="legend-desc">
+                  <strong>Artyleria Dziekanatu</strong>
+                  <span>Gdy jest zbyt trudno: natychmiast odrzuca profesora do narożnika mapy!</span>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -205,12 +223,13 @@
           <div class="controls-guide">
             <div class="controls-col">
               <span class="controls-type">PC / Klawiatura:</span>
-              <span class="keys-badge"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> lub <kbd>Strzałki</kbd> — Ruch</span>
-              <span class="keys-badge"><kbd>Shift</kbd> / <kbd>Spacja</kbd> — Sprint</span>
+              <span class="keys-badge"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> — Ruch</span>
+              <span class="keys-badge"><kbd>Shift</kbd> — Sprint</span>
+              <span class="keys-badge"><kbd>R</kbd> — 🎯 Artyleria</span>
             </div>
             <div class="controls-col">
               <span class="controls-type">Smartfon / Tablet:</span>
-              <span class="keys-badge">Wirtualny D-Pad i przycisk ⚡ SPRINT</span>
+              <span class="keys-badge">D-Pad, ⚡ SPRINT oraz 🎯 ARTYLERIA</span>
             </div>
           </div>
         </div>
