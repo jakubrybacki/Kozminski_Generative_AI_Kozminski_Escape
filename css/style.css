@@ -1,0 +1,1067 @@
+/* ==========================================================================
+   KOZMINSKI ESCAPE: POLOWANIE NA ECTS
+   Plik: css/style.css
+   Oficjalny styl Akademii Leona Koźmińskiego (ALK) w Warszawie
+   Stylistyka: Modern Retro-Arcade
+   ========================================================================== */
+
+/* --- 1. ZMIENNE PROJEKTOWE & OFICJALNA PALETA ALK --- */
+:root {
+  /* Oficjalna paleta Akademii Leona Koźmińskiego */
+  --alk-navy: #002244;              /* Główny granat ALK */
+  --alk-navy-dark: #0a1128;         /* Ciemny granat tła */
+  --alk-gold: #f2a900;              /* Akcentowe złoto ALK */
+  --alk-gold-light: #ffc740;        /* Jasne złoto ALK */
+  --alk-navy-accent: #004b87;       /* Kolor uzupełniający (błękit korporacyjny) */
+
+  /* Kolory funkcyjne i świat gry */
+  --alk-patio-green: #10b981;       /* Zielone Patio ALK */
+  --alk-patio-dark: #065f46;
+  --alk-danger: #dc2626;            /* Kampania Wrześniowa / Porażka */
+  --alk-danger-light: #f87171;
+  
+  /* Powierzchnie i szkło */
+  --glass-hud-bg: rgba(10, 17, 40, 0.85);
+  --glass-card-bg: rgba(0, 34, 68, 0.82);
+  --glass-surface-elevated: #111e3f;
+  --glass-border-subtle: rgba(255, 255, 255, 0.12);
+  --border-gold: #f2a900;
+  --border-gold-glow: rgba(242, 169, 0, 0.45);
+
+  /* Typografia */
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+
+  /* Zaokrąglenia i cienie */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 18px;
+  --radius-full: 9999px;
+
+  --shadow-arcade: 0 8px 32px rgba(0, 0, 0, 0.65), 0 0 20px rgba(0, 75, 135, 0.35);
+  --shadow-gold: 0 4px 20px rgba(242, 169, 0, 0.35);
+  --shadow-gold-hover: 0 6px 28px rgba(255, 199, 64, 0.6);
+}
+
+/* --- RESET & USTAWIENIA BAZOWE --- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+  background-color: var(--alk-navy-dark);
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(0, 75, 135, 0.28) 0%, transparent 60%),
+    linear-gradient(180deg, var(--alk-navy-dark) 0%, #050814 100%);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-x: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.tabular-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Główny kontener aplikacji */
+.game-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 14px 16px 24px;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 14px;
+}
+
+/* ==========================================================================
+   2. NOWOCZESNY RETRO-ARCADE HUD ZE SZKŁEM I ZŁOTĄ RAMKĄ
+   ========================================================================== */
+.hud-container {
+  width: 100%;
+  max-width: 800px;
+  background: var(--glass-hud-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 2px solid var(--border-gold);
+  border-radius: var(--radius-lg);
+  padding: 10px 18px;
+  display: grid;
+  grid-template-columns: 1.35fr 1.25fr 1.4fr auto;
+  align-items: center;
+  gap: 14px;
+  box-shadow: var(--shadow-arcade), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  position: relative;
+  z-index: 30;
+}
+
+/* Efekt świetlnego akcentu retro na krawędzi HUD */
+.hud-container::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 20%;
+  right: 20%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--alk-gold-light), transparent);
+  pointer-events: none;
+}
+
+/* Sekcja Brand ALK */
+.hud-brand-zone {
+  display: flex;
+  align-items: center;
+}
+
+.brand-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.alk-monogram {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--alk-navy-accent), var(--alk-navy));
+  border: 1px solid var(--alk-gold-light);
+  border-radius: var(--radius-sm);
+  padding: 5px 9px;
+  box-shadow: 0 2px 10px rgba(0, 34, 68, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.game-title-micro {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--alk-gold-light);
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(242, 169, 0, 0.4);
+}
+
+.campus-location {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-main);
+  white-space: nowrap;
+}
+
+/* Karty informacyjne HUD */
+.hud-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: rgba(0, 34, 68, 0.55);
+  border: 1px solid rgba(242, 169, 0, 0.25);
+  border-radius: var(--radius-md);
+  padding: 6px 12px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.hud-label {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+/* Licznik ECTS */
+.ects-card {
+  border-color: rgba(242, 169, 0, 0.4);
+}
+
+.ects-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.target-flag {
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--alk-gold-light);
+  background: rgba(242, 169, 0, 0.15);
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(242, 169, 0, 0.3);
+}
+
+.ects-metric-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ects-icon {
+  font-size: 16px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+}
+
+.ects-score {
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.ects-score strong {
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--alk-gold-light);
+  text-shadow: 0 0 12px rgba(242, 169, 0, 0.45);
+}
+
+.ects-denom {
+  font-size: 12px;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.mini-progress-track {
+  width: 100%;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-top: 2px;
+}
+
+.mini-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--alk-gold), var(--alk-gold-light));
+  border-radius: var(--radius-full);
+  box-shadow: 0 0 8px rgba(242, 169, 0, 0.6);
+  transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Pasek Staminy ze stopniowym gradientem */
+.stamina-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stamina-tag {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--alk-patio-green);
+}
+
+.stamina-track {
+  width: 100%;
+  height: 10px;
+  background: rgba(10, 17, 40, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  padding: 1px;
+}
+
+.stamina-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--alk-patio-green) 0%, var(--alk-gold) 65%, var(--alk-gold-light) 100%);
+  border-radius: var(--radius-full);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+  transition: width 0.1s linear, background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.stamina-fill.exhausted {
+  background: linear-gradient(90deg, #991b1b, var(--alk-danger)) !important;
+  box-shadow: 0 0 8px rgba(220, 38, 38, 0.7) !important;
+}
+
+/* Przyciski HUD (audio, pauza) */
+.hud-controls-zone {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hud-icon-btn {
+  background: rgba(0, 34, 68, 0.6);
+  border: 1px solid rgba(242, 169, 0, 0.35);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  cursor: pointer;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.hud-icon-btn:hover {
+  background: rgba(0, 75, 135, 0.8);
+  border-color: var(--alk-gold-light);
+  transform: scale(1.08);
+  box-shadow: 0 0 12px rgba(242, 169, 0, 0.4);
+}
+
+.hud-icon-btn:active {
+  transform: scale(0.94);
+}
+
+/* ==========================================================================
+   3. KONTENER CANVAS ORAZ KOMIKSOWY DYMEK PROFESORA
+   ========================================================================== */
+.viewport-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.canvas-box {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  aspect-ratio: 800 / 540;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: #050b18;
+  border: 2px solid var(--border-gold);
+  box-shadow: var(--shadow-arcade), 0 0 30px rgba(242, 169, 0, 0.25);
+}
+
+#gameCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  background-color: var(--alk-navy);
+}
+
+/* Komiksowy dymek nad profesorem z animacją wyskakiwania */
+.speech-bubble {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  max-width: 490px;
+  background: #ffffff;
+  color: var(--alk-navy);
+  border: 2.5px solid var(--alk-navy);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  box-shadow: 4px 6px 0px rgba(0, 34, 68, 0.8), 0 12px 24px rgba(0, 0, 0, 0.4);
+  z-index: 20;
+  pointer-events: none;
+  animation: bubblePop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  transform-origin: bottom left;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+/* Trójkątny wskaźnik komiksowy (speech bubble arrow) */
+.speech-bubble .bubble-arrow,
+.speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 28px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 12px 10px 0 10px;
+  border-color: #ffffff transparent transparent transparent;
+  filter: drop-shadow(0 2px 0 var(--alk-navy));
+}
+
+/* Obwódka trójkątnego wskaźnika komiksowego */
+.speech-bubble::before {
+  content: '';
+  position: absolute;
+  bottom: -15.5px;
+  left: 26.5px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 15px 11.5px 0 11.5px;
+  border-color: var(--alk-navy) transparent transparent transparent;
+}
+
+/* Animacja wyskakiwania komiksowego dymka */
+@keyframes bubblePop {
+  0% {
+    opacity: 0;
+    transform: scale(0.7) translateY(8px);
+  }
+  70% {
+    transform: scale(1.04) translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.speech-bubble.hidden-dialogue {
+  opacity: 0;
+  transform: scale(0.85) translateY(-8px);
+  pointer-events: none;
+}
+
+.bubble-avatar-box {
+  flex-shrink: 0;
+}
+
+.professor-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--alk-navy), var(--alk-navy-accent));
+  border: 2px solid var(--alk-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+.bubble-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bubble-speaker {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.speaker-name {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--alk-navy);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.speaker-dept {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--alk-navy-accent);
+}
+
+.speaker-message {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #0f172a;
+  line-height: 1.38;
+}
+
+/* Wskaźnik bonusu w trakcie rozgrywki */
+.active-buff {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  background: rgba(16, 185, 129, 0.95);
+  backdrop-filter: blur(8px);
+  color: #ffffff;
+  border: 1px solid #34d399;
+  border-radius: var(--radius-full);
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 800;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.45);
+  z-index: 20;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.active-buff.hidden {
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   4. ZŁOTE PRZYCISKI Z ANIMACJĄ POWIĘKSZENIA (HOVER SCALE)
+   ========================================================================== */
+.btn-primary {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(135deg, var(--alk-gold) 0%, var(--alk-gold-light) 100%);
+  color: var(--alk-navy-dark);
+  border: 2px solid #ffffff;
+  border-radius: var(--radius-md);
+  padding: 13px 22px;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: var(--shadow-gold);
+  transition: transform 0.22s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.22s ease, filter 0.22s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animacja powiększenia (hover scale) i retro-poświaty */
+.btn-primary:hover {
+  transform: scale(1.04) translateY(-2px);
+  box-shadow: var(--shadow-gold-hover);
+  filter: brightness(1.08);
+}
+
+.btn-primary:active {
+  transform: scale(0.97) translateY(1px);
+  box-shadow: 0 2px 10px rgba(242, 169, 0, 0.4);
+}
+
+.btn-primary.btn-danger {
+  background: linear-gradient(135deg, var(--alk-danger) 0%, #b91c1c 100%);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.4);
+}
+
+.btn-primary.btn-danger:hover {
+  box-shadow: 0 6px 28px rgba(239, 68, 68, 0.65);
+}
+
+.btn-primary.btn-success {
+  background: linear-gradient(135deg, var(--alk-patio-green) 0%, #047857 100%);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.45);
+}
+
+.btn-primary.btn-success:hover {
+  box-shadow: 0 6px 28px rgba(52, 211, 153, 0.65);
+}
+
+.btn-arrow {
+  font-size: 16px;
+  transition: transform 0.2s ease;
+}
+
+.btn-primary:hover .btn-arrow {
+  transform: translateX(4px);
+}
+
+/* ==========================================================================
+   5. EKRANY MODALNE (START, PORAŻKA, ZWYCIĘSTWO)
+   ========================================================================== */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 17, 40, 0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 100;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.modal-backdrop.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 580px;
+  background: var(--alk-navy);
+  border: 2px solid var(--border-gold);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.8), 0 0 35px rgba(242, 169, 0, 0.3);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: modalPopIn 0.32s cubic-bezier(0.175, 0.885, 0.32, 1.2) forwards;
+}
+
+@keyframes modalPopIn {
+  from {
+    transform: scale(0.92) translateY(14px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header-hero {
+  background: linear-gradient(135deg, #001730, var(--alk-navy));
+  border-bottom: 2px solid var(--border-gold);
+  padding: 24px 20px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.alk-emblem {
+  width: 52px;
+  height: 52px;
+  background: rgba(242, 169, 0, 0.15);
+  border: 2px solid var(--alk-gold);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  box-shadow: 0 4px 16px rgba(242, 169, 0, 0.35);
+}
+
+.modal-title {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  margin-top: 4px;
+}
+
+.modal-subtitle {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--alk-gold-light);
+}
+
+/* Warianty nagłówków: Kampania Wrześniowa i Zwycięstwo */
+.fail-hero {
+  background: linear-gradient(135deg, #3f0909, #7f1d1d);
+  border-bottom-color: var(--alk-danger);
+}
+
+.fail-heading {
+  color: #fca5a5;
+}
+
+.fail-icon, .victory-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+}
+
+.fail-icon {
+  background: rgba(220, 38, 38, 0.25);
+  border: 2px solid var(--alk-danger-light);
+}
+
+.victory-hero {
+  background: linear-gradient(135deg, #053b2d, var(--alk-patio-dark));
+  border-bottom-color: var(--alk-patio-green);
+}
+
+.victory-heading {
+  color: #6ee7b7;
+}
+
+.victory-icon {
+  background: rgba(16, 185, 129, 0.25);
+  border: 2px solid var(--alk-patio-green);
+}
+
+/* Ciało Modala */
+.modal-body {
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 68vh;
+  overflow-y: auto;
+}
+
+.story-box {
+  background: rgba(0, 75, 135, 0.25);
+  border-left: 4px solid var(--alk-gold);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 12px 16px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #e2e8f0;
+}
+
+.story-box strong {
+  color: var(--alk-gold-light);
+}
+
+.legend-heading {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--alk-gold-light);
+  margin-bottom: 8px;
+}
+
+.legend-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(10, 17, 40, 0.6);
+  border: 1px solid rgba(242, 169, 0, 0.2);
+  border-radius: var(--radius-md);
+  padding: 8px 10px;
+}
+
+.legend-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.legend-desc {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.legend-desc strong {
+  font-size: 12px;
+  color: #ffffff;
+}
+
+.legend-desc span {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+
+.controls-guide {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(10, 17, 40, 0.8);
+  border: 1px dashed rgba(242, 169, 0, 0.3);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+}
+
+.controls-col {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.controls-type {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--alk-gold-light);
+}
+
+.keys-badge {
+  font-size: 11px;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+kbd {
+  display: inline-block;
+  padding: 3px 7px;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  color: var(--alk-gold-light);
+  background: var(--alk-navy);
+  border: 1px solid var(--alk-gold);
+  border-radius: 4px;
+  box-shadow: 0 2px 0 #001730;
+}
+
+.dialogue-callout {
+  position: relative;
+  background: rgba(220, 38, 38, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-radius: var(--radius-md);
+  padding: 14px 16px 14px 36px;
+  font-style: italic;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #fecaca;
+}
+
+.dialogue-callout .quote-mark {
+  position: absolute;
+  top: 6px;
+  left: 10px;
+  font-size: 28px;
+  font-family: serif;
+  color: rgba(239, 68, 68, 0.6);
+}
+
+.victory-callout {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.35);
+  color: #a7f3d0;
+}
+
+.victory-callout .quote-mark {
+  color: rgba(16, 185, 129, 0.6);
+}
+
+.stats-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.stat-box {
+  background: rgba(10, 17, 40, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  padding: 10px 8px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-box.gold-border {
+  border-color: var(--border-gold);
+}
+
+.stat-caption {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.stat-big {
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.stat-big.gold-text {
+  color: var(--alk-gold-light);
+}
+
+.stat-big.highlight-grade {
+  color: #34d399;
+}
+
+.modal-footer {
+  padding: 16px 22px 22px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ==========================================================================
+   6. STEROWANIE DOTYKOWE & RESPONSYWNOŚĆ (MOBILE-FIRST)
+   ========================================================================== */
+
+/* Domyślnie na ekranach desktopowych (powyżej 768px): ukryj kontrolki dotykowe */
+#mobile-controls,
+#touch-controls,
+.touch-controls-container {
+  display: none;
+  width: 100%;
+  max-width: 800px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  touch-action: manipulation;
+  z-index: 25;
+}
+
+/* W widokach poniżej 768px aktywuj wyświetlanie ekranowych przycisków sterowania */
+@media (max-width: 768px) {
+  #mobile-controls,
+  #touch-controls,
+  .touch-controls-container {
+    display: flex !important;
+  }
+
+  /* Dopasowanie HUD w widoku mobilnym */
+  .hud-container {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 8px 12px;
+  }
+
+  .hud-brand-zone {
+    grid-column: span 1;
+  }
+
+  .hud-controls-zone {
+    grid-column: span 1;
+    justify-content: flex-end;
+  }
+
+  .hud-ects-zone {
+    grid-column: span 1;
+  }
+
+  .hud-stamina-zone {
+    grid-column: span 1;
+  }
+
+  .legend-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .speech-bubble {
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    padding: 8px 10px;
+  }
+
+  .professor-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 17px;
+  }
+
+  .speaker-message {
+    font-size: 11.5px;
+  }
+}
+
+/* Wygląd wirtualnego D-Pada (Krzyżaka) */
+.dpad-cluster {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.dpad-middle-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dpad-center-hub {
+  width: 54px;
+  height: 54px;
+  background: rgba(0, 34, 68, 0.4);
+  border-radius: var(--radius-sm);
+}
+
+.dpad-btn {
+  width: 54px;
+  height: 54px;
+  background: linear-gradient(135deg, var(--alk-navy-accent), var(--alk-navy));
+  border: 1.5px solid var(--border-gold);
+  border-radius: var(--radius-md);
+  color: #ffffff;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+  transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.2), background 0.12s ease, border-color 0.12s ease;
+}
+
+.dpad-btn:active, .dpad-btn.active {
+  background: var(--alk-gold);
+  color: var(--alk-navy-dark);
+  border-color: #ffffff;
+  transform: scale(0.92);
+  box-shadow: 0 0 14px var(--alk-gold);
+}
+
+/* Przycisk Sprintu */
+.action-cluster {
+  display: flex;
+  align-items: center;
+  padding-right: 6px;
+}
+
+.sprint-btn {
+  width: 86px;
+  height: 86px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--alk-patio-green) 0%, var(--alk-patio-dark) 100%);
+  border: 2.5px solid var(--alk-gold-light);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 6px 24px rgba(16, 185, 129, 0.45), 0 0 15px rgba(242, 169, 0, 0.3);
+  transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.2), filter 0.15s ease;
+}
+
+.sprint-btn:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+
+.sprint-btn:active, .sprint-btn.active {
+  transform: scale(0.92);
+  filter: brightness(1.25);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.8);
+}
+
+.sprint-icon {
+  font-size: 26px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+}
+
+.sprint-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
